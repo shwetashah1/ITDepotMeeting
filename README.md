@@ -1,41 +1,49 @@
 # IT Asset Scheduler
 
-# 🗓️ Support Appointment Scheduling System
+## 🗓️ Support Appointment Scheduling System
 
-A dynamic web application that helps IT support teams manage **asset return, swap, and pickup appointments** through a structured and user-friendly scheduling interface.
+A dynamic, single-page web application that helps IT support teams manage **asset return, swap, and pickup appointments** through a structured scheduling interface.
 
-Built using **HTML5, CSS3, and Advanced JavaScript**, this project demonstrates real-world frontend architecture, dynamic rendering, and interactive UI design.
-
----
-
-# 🚀 Project Pitch
-
-IT support teams often coordinate hardware-related requests manually, leading to scheduling conflicts and inefficiencies.
-
-This project provides a **simplified scheduling interface** that allows support staff to manage appointments and employees to view availability in a structured way.
+Built with **HTML5, CSS3, and vanilla JavaScript** — no frameworks, no build tools.
 
 ---
 
-# 👤 User Persona
+## 🚀 Project Pitch
 
-## 🧑‍💼 Support Assistant (Primary User)
+IT support teams often coordinate hardware-related requests manually, leading to scheduling conflicts and inefficiencies. This project provides a **lightweight scheduling interface** that allows support staff to create, manage, and track appointments while enforcing business rules like working-hours-only scheduling, weekend blocking, and conflict detection.
 
-**Goal:**  
-Efficiently schedule and manage IT asset-related appointments.
+---
+
+## 👤 User Persona
+
+### 🧑‍💼 Support Assistant (Primary User)
+
+**Goal:** Efficiently schedule and manage IT asset-related appointments.
 
 **Pain Points:**
-
 - Manual scheduling and coordination
 - Conflicting time slots
 - Lack of structured workflow
 
+### Target Audience
+
+**Primary Users**
+- IT Support Assistants
+- IT Operations managers managing asset lifecycle
+
+**Secondary Users**
+- Employees requesting asset return, swap, or pickup
+- Supervisors who need visibility into scheduled appointments
+
+**Context of Use**
+- Internal IT support workflows
+- Organizations handling frequent hardware movement (laptops, monitors, peripherals)
+
 ---
 
-# 🎯 Problem
+## 🎯 Problem
 
-There is no simple, lightweight interface for managing IT support appointments with clear visibility and control over scheduling.
-
-This leads to:
+There is no simple, lightweight interface for managing IT support appointments with clear visibility and control over scheduling. This leads to:
 
 - Double bookings
 - Poor coordination
@@ -43,88 +51,89 @@ This leads to:
 
 ---
 
-# ✨ Features
+## ✨ Features
 
-- Multi-view interface (Home, Schedule, Contact)
-- Dynamic data gallery displaying appointment-related data
-- Real-time search and filtering of data
-- Live widget using Fetch API (e.g., quote or time)
-- Client-side form validation with custom error handling
-- Responsive layout for mobile and desktop
-- Consistent UI design using CSS variables
-
----
-
-# 🛠️ Technical Implementation
-
-- Built with **HTML5, CSS3, Advanced JavaScript**
-- Uses **Flexbox and CSS Grid** for layout
-- Implements **multi-view architecture** using JavaScript to toggle sections
-- Dynamic rendering of data using JavaScript arrays
-- Event-driven interactions for filtering and form handling
-- Fetch API used to retrieve live data from a public API
-- CSS variables used for consistent spacing and color system
+- **Two-view architecture** (Home Dashboard, Appointments)
+- **Home Dashboard** with appointment statistics — counts by type, by status, and recent activity
+- **Appointment Gallery** with card-based layout and real-time search/filtering
+- **Full CRUD operations** — Create, Edit, Cancel, and Mark Resolved
+- **Scheduling Rule Engine** — weekend blocking, working-hours enforcement, conflict detection
+- **Live Widget** using Fetch API (e.g., motivational quote)
+- **Client-side form validation** with custom error messaging
+- **Simulated notifications** (toast-style UI messages)
+- **Responsive design** — mobile, tablet, and desktop layouts
+- **Consistent design system** using CSS variables
 
 ---
 
-# 🧩 Application Structure
+## 🛠️ Technical Implementation
 
-## Views:
-
-- **Home View** → Overview and navigation
-- **Schedule View** → Data gallery and filtering
-- **Contact View** → Form with validation
-
----
-
-# 📊 Data Gallery
-
-- Built using a local JavaScript array (minimum 6 items)
-- Data rendered dynamically as cards
-- Users can filter/search results in real-time
+- Built with **HTML5, CSS3, vanilla JavaScript** — zero dependencies
+- Uses **Flexbox and CSS Grid** for responsive layout
+- **Single-page architecture** — JavaScript toggles view visibility
+- Data loaded from **JSON file via Fetch API** on first visit
+- Runtime persistence via **localStorage**
+- **Modular JS architecture** — separate files for app logic, data, storage, and rules
+- CSS variables for consistent spacing, color palette, and typography
 
 ---
 
-# 🔄 Live Widget
+## 🧩 Application Views
 
-- Integrated using the **Fetch API**
-- Displays real-time data (e.g., motivational quote)
-- Updates asynchronously without page reload
+### Home View (Dashboard)
+- Appointment summary statistics (by type, by status)
+- At-a-glance counts for Scheduled, Confirmed, Resolved, Cancelled
+- Breakdown by appointment type (Return, Swap, Pickup)
+- Live widget section (fetched from public API)
 
----
-
-# 🧾 Form Validation
-
-- Custom JavaScript validation implemented
-- Provides user-friendly error messages
-- Does not rely solely on HTML5 required attributes
-
----
-
-# 📱 Responsive Design
-
-- Mobile-first design approach
-- Layout adapts across screen sizes:
-  - 1 column (mobile)
-  - 2 columns (tablet)
-  - 3+ columns (desktop)
-- Gallery component changes structure between mobile and desktop
+### Appointments View
+- Card-based appointment gallery (minimum 6 seed items)
+- Search bar and filter dropdown for real-time filtering
+- Create Appointment form with inline validation
+- Edit mode (reuses form, pre-filled fields)
+- Action buttons per card: Edit, Cancel, Mark Resolved
 
 ---
 
-# ⚠️ Challenges & Solutions
+## ⚙️ Scheduling Rule Engine
 
-## Challenge:
+The system enforces business constraints to prevent scheduling errors:
 
-Implementing dynamic filtering without reloading the page.
+- **No Weekends:** Appointments cannot be booked on Saturday or Sunday
+- **Enforced Hours:** Appointments restricted to IT support hours (9:00–17:00)
+- **Conflict Detection:** New/edited appointments validated against existing records
+- **Date Validation:** No past-date scheduling allowed
 
-## Solution:
+### Availability Formula
 
-Used JavaScript to filter the dataset and re-render the UI based on user input, ensuring a smooth and responsive user experience.
+$$Available Slots = Working Hours − (Existing Appointments + Rule Violations)$$
 
 ---
 
-# 📁 Project Setup
+## 🧱 Data Schema
+
+### Appointment
+
+```json
+{
+  "id": "number",
+  "employeeName": "string",
+  "employeeEmail": "string",
+  "supervisorName": "string",
+  "supervisorEmail": "string",
+  "appointmentType": "Return | Swap | Pickup",
+  "date": "YYYY-MM-DD",
+  "time": "HH:MM",
+  "status": "Scheduled | Confirmed | Resolved | Cancelled",
+  "notes": "string",
+  "createdAt": "timestamp",
+  "updatedAt": "timestamp"
+}
+```
+
+---
+
+## 📁 Project Structure
 
 ```
 ITAssetScheduler/
@@ -134,170 +143,100 @@ ITAssetScheduler/
 │   ├── css/
 │   │   └── style.css
 │   └── js/
-│       ├── app.js
-│       ├── script.js
-│       ├── storage.js
-│       └── data.json
+│       ├── app.js          # Main app logic, view switching, initialization
+│       ├── ui.js            # DOM rendering, form handling, notifications
+│       ├── storage.js       # localStorage read/write, data loading
+│       ├── rules.js         # Scheduling rule engine
+│       └── data/
+│           └── appointments.json  # Seed data (loaded via Fetch API)
 ├── docs/
-│   ├── UI.md
+│   ├── instructions.md
+│   ├── wireframe.md
+│   └── implementation_plan.md
+├── specifications.md
+└── README_old.md
 ```
 
 ---
 
-# 🌐 Live Demo
+## 👤 User Stories
+
+**Core User Story**
+> As an IT support assistant, I want to schedule and manage appointments for asset return, swap, and pickup so that I can efficiently coordinate with employees and track IT assets.
+
+**Supporting User Stories**
+
+- **Appointment Creation**
+  > As a support assistant, I want to create an appointment so that I can confirm a time with an employee.
+
+- **Appointment Editing**
+  > As a support assistant, I want to update an appointment so that I can handle scheduling changes.
+
+- **Cancellation**
+  > As a support assistant, I want to cancel an appointment so that it is removed from active scheduling.
+
+- **Resolution**
+  > As a support assistant, I want to mark an appointment as resolved so that completed work is tracked.
+
+- **Dashboard Visibility**
+  > As a support assistant, I want to see appointment statistics at a glance so that I can manage workload and avoid conflicts.
+
+- **Search & Filter**
+  > As a support assistant, I want to search and filter appointments so that I can quickly find specific records.
+
+---
+
+## 📱 Responsive Design
+
+- Mobile-first design approach
+- Layout adapts across screen sizes:
+  - 1 column (mobile)
+  - 2 columns (tablet)
+  - 3+ columns (desktop)
+- Appointment gallery restructures between mobile and desktop
+
+---
+
+## ⚠️ Challenges & Solutions
+
+### Challenge:
+Implementing dynamic filtering and a scheduling rule engine without reloading the page.
+
+### Solution:
+Used modular JavaScript to separate concerns — the rule engine validates constraints independently of the UI, and filtering re-renders the gallery from the in-memory dataset, ensuring a smooth and responsive experience.
+
+---
+
+## 🔔 Notification System (Simulated)
+
+User actions trigger inline toast notifications:
+- ✅ Appointment created successfully
+- 📧 Email notification sent to employee & supervisor (simulated)
+- ✏️ Appointment updated
+- ❌ Appointment cancelled
+- ✔️ Appointment resolved
+
+---
+
+## 🚀 Future Improvements
+
+- Calendar view for appointments
+- Booking window per ticket (restricted time ranges)
+- Role-based views (Support vs. Employee)
+- Backend integration (API + database)
+- Real email notifications
+
+---
+
+## 🌐 Deployment
 
 - **GitHub Repository:** [Add Link]
 - **Live Deployment:** [Add Link]
 
 ---
 
-# 📌 Notes
+## 📌 Notes
 
-- Low-fidelity wireframe included in repository
-- Research and API references documented in `NOTES.md`
+- Low-fidelity wireframe included in `docs/wireframe.md`
+- System specifications documented in `specifications.md`
 - Git history follows atomic commit structure (10+ commits)
-
-### 🎯 Target Audience
-
-**Primary Users**
-
-- IT Support Assistants
-- IT Operations manager managing asset lifecycle
-
-**Secondary Users**
-
-- Employees requesting asset return, swap, or pickup
-- Supervisors who need visibility into Employees scheduled appointments
-
-**Context of Use**
-
-- Internal IT support workflows
-- Organizations handling frequent hardware movement (laptops, monitors, peripherals)
-
----
-
-### 👤 User Stories
-
-**Core User Story**
-
-> As an IT support assistant, I want to schedule and manage appointments for asset return, swap, and pickup so that I can efficiently coordinate with employees and track IT assets.
-
-**Supporting User Stories**
-
-- **Appointment Creation**
-
-  > As a support assistant, I want to create an appointment after receiving a ticket so that I can confirm a time with an employee.
-
-- **Notification**
-
-  > As a support assistant, I want to notify an employee and their supervisor so that everyone is informed about the appointment.
-
-- **Update Appointment**
-
-  > As a support assistant, I want to update an appointment so that I can handle scheduling changes.
-
-- **Cancellation**
-
-  > As an employee or supervisor, I want to cancel an appointment so that I can reschedule if needed.
-
-- **Visibility**
-  > As a support assistant, I want to view all appointments so that I can manage workload and avoid conflicts.
-
----
-
-### 🧱 Data Schema
-
-#### Basic Appointment Structure
-
-```json
-{
-  "id": "number",
-  "employeeId": "number",
-  "typeId": "number",
-  "date": "YYYY-MM-DD",
-  "time": "HH:MM",
-  "status": "number",
-  "notes": "string",
-  "createdAt": "timestamp",
-  "updatedAt": "timestamp"
-}
-```
-
-### Appointment Type: "Return | Swap | Pickup",
-
-```json
-{
-  "id": "number",
-  "name": "string",
-  "createdAt":"timestamp",
-  "updatedAt":"timestamp",
-  "deletedAt":"timestamp"
-}
-```
-
-### Appointment Status: "Scheduled | Confirmed | Resolved | Cancelled",
-
-```json
-{
-  "id": "number",
-  "name": "string",
-  "createdAt":"timestamp",
-  "updatedAt":"timestamp",
-  "deletedAt":"timestamp"
-}
-```
-
-#### Basic Employee Structure
-
-```json
-{
-  "id": "number",
-  "name": "string",
-  "email": "string",
-  "reportingId": "number",
-  "status": "number",
-  "createdAt":"timestamp",
-  "updatedAt":"timestamp",
-}
-```
-
-### Employee Status: "Active | Inactive",
-
-```json
-{
-  "id": "number",
-  "name": "string",
-  "createdAt":"timestamp",
-  "updatedAt":"timestamp",
-  "deletedAt":"timestamp"
-}
-```
-
-#### Example Appointment Structure
-
-```json
-{
-  "id": 1,
-  "employee": {
-    "name": "John Doe",
-    "email": "john@example.com"
-  },
-  "reporting": {
-    "name": "John Doe",
-    "email": "manager@example.com"
-  },
-  "appointmentType": "Return",
-  "asset": {
-    "assetId": "LAP-123",
-    "assetType": "Laptop | Monitor | Peripheral"
-  },
-  "schedule": {
-    "date": "2026-04-15",
-    "time": "10:30"
-  },
-  "status": "Scheduled",
-  "notes": "",
-  "createdAt": "timestamp",
-  "updatedAt": "timestamp"
-}
-```
