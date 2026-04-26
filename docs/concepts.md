@@ -110,24 +110,18 @@ Base styles target mobile, with `min-width` media queries progressively enhancin
 
 Two breakpoints: **601px** (tablet) and **1025px** (desktop).
 
-### Transitions and Animations
+### Transitions
 
-- **Transitions** — Smooth hover effects on cards (`transform`, `box-shadow`), buttons (`background-color`), and inputs (`border-color`)
-- **Keyframe animations** — Toast notifications slide in (`toast-in`) and fade out (`toast-out`) using `@keyframes`
-
-```css
-@keyframes toast-in {
-  from { opacity: 0; transform: translateX(100%); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-```
+- **Transitions** — Smooth hover effects on cards (`transform`, `box-shadow`), buttons (`background-color`), inputs (`border-color`), and tooltips (`opacity`).
 
 ### Other CSS3 Features
 
 | Feature | Usage |
 |---------|-------|
+| `attr()` | Custom CSS-only tooltips extracting `data-title` values |
 | `backdrop-filter: blur()` | Frosted glass effect on sticky header |
 | `::placeholder` | Styled placeholder text in search input |
+| `::after` | Pseudo-elements for tooltip rendering |
 | `box-shadow` | Card elevation, input focus rings |
 | `rgba()` | Semi-transparent badge and button backgrounds |
 | `text-transform` / `letter-spacing` | Uppercase badge and stat label styling |
