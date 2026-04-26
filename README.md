@@ -150,11 +150,11 @@ ITAssetScheduler/
 │       └── data/
 │           └── appointments.json  # Seed data (loaded via Fetch API)
 ├── docs/
+│   └── concepts.md
 │   ├── instructions.md
-│   ├── wireframe.md
 │   └── implementation_plan.md
+│   └── concepts.md
 ├── specifications.md
-└── README_old.md
 ```
 
 ---

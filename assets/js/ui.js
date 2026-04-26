@@ -7,19 +7,19 @@ const UI = {
 
   /* ---------- DOM References ---------- */
   elements: {
-    statsGrid:      () => document.getElementById('stats-grid'),
-    liveWidget:     () => document.getElementById('live-widget'),
-    recentList:     () => document.getElementById('recent-list'),
-    gallery:        () => document.getElementById('gallery'),
-    formContainer:  () => document.getElementById('form-container'),
-    formTitle:      () => document.getElementById('form-title'),
-    form:           () => document.getElementById('appointment-form'),
-    formErrors:     () => document.getElementById('form-errors'),
-    submitBtn:      () => document.getElementById('btn-submit'),
-    searchInput:    () => document.getElementById('search-input'),
-    filterStatus:   () => document.getElementById('filter-status'),
-    filterType:     () => document.getElementById('filter-type'),
-    toastContainer: () => document.getElementById('toast-container')
+    statsGrid:      () => document.querySelector('#stats-grid'),
+    liveWidget:     () => document.querySelector('#live-widget'),
+    recentList:     () => document.querySelector('#recent-list'),
+    gallery:        () => document.querySelector('#gallery'),
+    formContainer:  () => document.querySelector('#form-container'),
+    formTitle:      () => document.querySelector('#form-title'),
+    form:           () => document.querySelector('#appointment-form'),
+    formErrors:     () => document.querySelector('#form-errors'),
+    submitBtn:      () => document.querySelector('#btn-submit'),
+    searchInput:    () => document.querySelector('#search-input'),
+    filterStatus:   () => document.querySelector('#filter-status'),
+    filterType:     () => document.querySelector('#filter-type'),
+    toastContainer: () => document.querySelector('#toast-container')
   },
 
   /* ==========================================================
@@ -222,14 +222,14 @@ const UI = {
       // Edit mode
       title.textContent = 'Edit Appointment';
       submitBtn.textContent = 'Update Appointment';
-      document.getElementById('emp-name').value   = appointment.employeeName;
-      document.getElementById('emp-email').value   = appointment.employeeEmail;
-      document.getElementById('sup-name').value    = appointment.supervisorName;
-      document.getElementById('sup-email').value   = appointment.supervisorEmail;
-      document.getElementById('appt-type').value   = appointment.appointmentType;
-      document.getElementById('appt-date').value   = appointment.date;
-      document.getElementById('appt-time').value   = appointment.time;
-      document.getElementById('appt-notes').value  = appointment.notes || '';
+      document.querySelector('#emp-name').value   = appointment.employeeName;
+      document.querySelector('#emp-email').value   = appointment.employeeEmail;
+      document.querySelector('#sup-name').value    = appointment.supervisorName;
+      document.querySelector('#sup-email').value   = appointment.supervisorEmail;
+      document.querySelector('#appt-type').value   = appointment.appointmentType;
+      document.querySelector('#appt-date').value   = appointment.date;
+      document.querySelector('#appt-time').value   = appointment.time;
+      document.querySelector('#appt-notes').value  = appointment.notes || '';
     } else {
       // Create mode
       title.textContent = 'Create Appointment';
@@ -254,14 +254,14 @@ const UI = {
    */
   getFormData() {
     return {
-      employeeName:    document.getElementById('emp-name').value,
-      employeeEmail:   document.getElementById('emp-email').value,
-      supervisorName:  document.getElementById('sup-name').value,
-      supervisorEmail: document.getElementById('sup-email').value,
-      appointmentType: document.getElementById('appt-type').value,
-      date:            document.getElementById('appt-date').value,
-      time:            document.getElementById('appt-time').value,
-      notes:           document.getElementById('appt-notes').value
+      employeeName:    document.querySelector('#emp-name').value,
+      employeeEmail:   document.querySelector('#emp-email').value,
+      supervisorName:  document.querySelector('#sup-name').value,
+      supervisorEmail: document.querySelector('#sup-email').value,
+      appointmentType: document.querySelector('#appt-type').value,
+      date:            document.querySelector('#appt-date').value,
+      time:            document.querySelector('#appt-time').value,
+      notes:           document.querySelector('#appt-notes').value
     };
   },
 
@@ -292,7 +292,7 @@ const UI = {
   showView(viewName) {
     // Toggle views
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById(`${viewName}-view`).classList.add('active');
+    document.querySelector(`#${viewName}-view`).classList.add('active');
 
     // Toggle nav buttons
     document.querySelectorAll('.nav-btn').forEach(btn => {

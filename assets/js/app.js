@@ -43,43 +43,43 @@ const App = {
     });
 
     // Logo link → home
-    document.getElementById('logo-link').addEventListener('click', e => {
+    document.querySelector('#logo-link').addEventListener('click', e => {
       e.preventDefault();
       this.switchView('home');
     });
 
     // Create button
-    document.getElementById('btn-create').addEventListener('click', () => {
+    document.querySelector('#btn-create').addEventListener('click', () => {
       this.editingId = null;
       UI.showForm();
     });
 
     // Form submit
-    document.getElementById('appointment-form').addEventListener('submit', e => {
+    document.querySelector('#appointment-form').addEventListener('submit', e => {
       e.preventDefault();
       this.handleFormSubmit();
     });
 
     // Form close / cancel buttons
-    document.getElementById('btn-close-form').addEventListener('click', () => UI.hideForm());
-    document.getElementById('btn-cancel-form').addEventListener('click', () => UI.hideForm());
+    document.querySelector('#btn-close-form').addEventListener('click', () => UI.hideForm());
+    document.querySelector('#btn-cancel-form').addEventListener('click', () => UI.hideForm());
 
     // Search — debounced for performance
     let searchTimer;
-    document.getElementById('search-input').addEventListener('input', e => {
+    document.querySelector('#search-input').addEventListener('input', e => {
       clearTimeout(searchTimer);
       searchTimer = setTimeout(() => this.refreshGallery(), 250);
     });
 
     // Filter dropdowns
-    document.getElementById('filter-status').addEventListener('change', () => this.refreshGallery());
-    document.getElementById('filter-type').addEventListener('change', () => this.refreshGallery());
+    document.querySelector('#filter-status').addEventListener('change', () => this.refreshGallery());
+    document.querySelector('#filter-type').addEventListener('change', () => this.refreshGallery());
 
     // Clear all filters
-    document.getElementById('btn-clear-filters').addEventListener('click', () => this.clearFilters());
+    document.querySelector('#btn-clear-filters').addEventListener('click', () => this.clearFilters());
 
     // Stat card clicks (delegated since cards are rendered dynamically)
-    document.getElementById('stats-grid').addEventListener('click', e => {
+    document.querySelector('#stats-grid').addEventListener('click', e => {
       const card = e.target.closest('.stat-card-link');
       if (!card) return;
       this.navigateToAppointments(card.dataset.filterKey, card.dataset.filterValue);
@@ -112,15 +112,15 @@ const App = {
    */
   navigateToAppointments(filterKey, filterValue) {
     // Reset filters to defaults
-    document.getElementById('search-input').value = '';
-    document.getElementById('filter-status').value = 'all';
-    document.getElementById('filter-type').value = 'all';
+    document.querySelector('#search-input').value = '';
+    document.querySelector('#filter-status').value = 'all';
+    document.querySelector('#filter-type').value = 'all';
 
     // Apply the specific filter
     if (filterKey === 'status') {
-      document.getElementById('filter-status').value = filterValue;
+      document.querySelector('#filter-status').value = filterValue;
     } else if (filterKey === 'type') {
-      document.getElementById('filter-type').value = filterValue;
+      document.querySelector('#filter-type').value = filterValue;
     }
 
     // Update URL to reflect the filter
@@ -134,10 +134,10 @@ const App = {
    */
   applyUrlParams(params) {
     if (params.has('status')) {
-      document.getElementById('filter-status').value = params.get('status');
+      document.querySelector('#filter-status').value = params.get('status');
     }
     if (params.has('type')) {
-      document.getElementById('filter-type').value = params.get('type');
+      document.querySelector('#filter-type').value = params.get('type');
     }
   },
 
@@ -176,9 +176,9 @@ const App = {
 
   /** Reset all search and filter controls to defaults. */
   clearFilters() {
-    document.getElementById('search-input').value = '';
-    document.getElementById('filter-status').value = 'all';
-    document.getElementById('filter-type').value = 'all';
+    document.querySelector('#search-input').value = '';
+    document.querySelector('#filter-status').value = 'all';
+    document.querySelector('#filter-type').value = 'all';
     window.history.replaceState({}, '', window.location.pathname);
     this.refreshGallery();
   },
@@ -187,9 +187,9 @@ const App = {
    * Apply search + filters and re-render the gallery.
    */
   refreshGallery() {
-    const query  = document.getElementById('search-input').value.toLowerCase().trim();
-    const status = document.getElementById('filter-status').value;
-    const type   = document.getElementById('filter-type').value;
+    const query  = document.querySelector('#search-input').value.toLowerCase().trim();
+    const status = document.querySelector('#filter-status').value;
+    const type   = document.querySelector('#filter-type').value;
 
     const filtered = this.appointments.filter(a => {
       const matchesSearch = !query || a.employeeName.toLowerCase().includes(query);
