@@ -55,16 +55,28 @@ const UI = {
       { label: 'Pickups',   value: byType.Pickup,       filterKey: 'type', filterValue: 'Pickup' }
     ];
 
-    container.innerHTML = stats.map(s => `
-      <div class="stat-card stat-card-link"
-           data-filter-key="${s.filterKey}"
-           data-filter-value="${s.filterValue}"
-           role="link" tabindex="0"
-           title="View ${s.label} appointments">
-        <div class="stat-value">${s.value}</div>
-        <div class="stat-label">${s.label}</div>
-      </div>
-    `).join('');
+    container.textContent = '';
+    stats.forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'stat-card stat-card-link';
+      card.dataset.filterKey = s.filterKey;
+      card.dataset.filterValue = s.filterValue;
+      card.setAttribute('role', 'link');
+      card.setAttribute('tabindex', '0');
+      card.title = `View ${s.label} appointments`;
+
+      const val = document.createElement('div');
+      val.className = 'stat-value';
+      val.textContent = s.value;
+
+      const lbl = document.createElement('div');
+      lbl.className = 'stat-label';
+      lbl.textContent = s.label;
+
+      card.appendChild(val);
+      card.appendChild(lbl);
+      container.appendChild(card);
+    });
   },
 
   /**
@@ -73,32 +85,52 @@ const UI = {
    */
   renderRecentList(appointments) {
     const container = this.elements.recentList();
+    container.textContent = '';
+
     const sorted = [...appointments]
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       .slice(0, 5);
 
-    const heading = `
-      <div class="card-header">
-        <h4>🕐 Recent Appointments</h4>
-      </div>
-    `;
+    const header = document.createElement('div');
+    header.className = 'card-header';
+    const h4 = document.createElement('h4');
+    h4.textContent = '🕐 Recent Appointments';
+    header.appendChild(h4);
+    container.appendChild(header);
+
+    const body = document.createElement('div');
+    body.className = 'card-body';
 
     if (sorted.length === 0) {
-      container.innerHTML = heading + '<div class="card-body"><p class="empty-state">No appointments yet.</p></div>';
-      return;
+      const empty = document.createElement('p');
+      empty.className = 'empty-state';
+      empty.textContent = 'No appointments yet.';
+      body.appendChild(empty);
+    } else {
+      sorted.forEach(a => {
+        const item = document.createElement('div');
+        item.className = 'recent-item';
+
+        const name = document.createElement('span');
+        name.className = 'recent-item-name';
+        name.textContent = a.employeeName;
+
+        const meta = document.createElement('span');
+        meta.className = 'recent-item-meta';
+
+        const badge = document.createElement('span');
+        badge.className = `badge badge-${a.status.toLowerCase()}`;
+        badge.textContent = a.status;
+
+        meta.appendChild(badge);
+        meta.appendChild(document.createTextNode(` ${a.date}`));
+
+        item.appendChild(name);
+        item.appendChild(meta);
+        body.appendChild(item);
+      });
     }
-
-    const items = sorted.map(a => `
-      <div class="recent-item">
-        <span class="recent-item-name">${this.escapeHtml(a.employeeName)}</span>
-        <span class="recent-item-meta">
-          <span class="badge badge-${a.status.toLowerCase()}">${a.status}</span>
-          ${a.date}
-        </span>
-      </div>
-    `).join('');
-
-    container.innerHTML = heading + `<div class="card-body">${items}</div>`;
+    container.appendChild(body);
   },
 
   /* ==========================================================
@@ -110,16 +142,15 @@ const UI = {
    * @param {{ quote: string, author: string }} data
    */
   renderWidget(data) {
-    const container = this.elements.liveWidget();
-    container.innerHTML = `
-      <div class="card-header">
-        <h4>💡 Quote of the Day</h4>
-      </div>
-      <div class="card-body">
-        <p class="widget-quote">"${this.escapeHtml(data.quote)}"</p>
-        <p class="widget-author">— ${this.escapeHtml(data.author)}</p>
-      </div>
-    `;
+    const quoteEl = document.querySelector('#widget-quote');
+    const authorEl = document.querySelector('#widget-author');
+    if (!quoteEl || !authorEl) return;
+
+    quoteEl.className = 'widget-quote';
+    quoteEl.textContent = `"${data.quote}"`;
+
+    authorEl.className = 'widget-author';
+    authorEl.textContent = `— ${data.author}`;
   },
 
   /**
@@ -127,15 +158,14 @@ const UI = {
    * @param {string} message
    */
   renderWidgetError(message) {
-    const container = this.elements.liveWidget();
-    container.innerHTML = `
-      <div class="card-header">
-        <h4>💡 Quote of the Day</h4>
-      </div>
-      <div class="card-body">
-        <p class="widget-loading">${message}</p>
-      </div>
-    `;
+    const quoteEl = document.querySelector('#widget-quote');
+    const authorEl = document.querySelector('#widget-author');
+    if (!quoteEl || !authorEl) return;
+
+    quoteEl.className = 'widget-loading';
+    quoteEl.textContent = message;
+
+    authorEl.textContent = '';
   },
 
   /* ==========================================================
@@ -148,72 +178,127 @@ const UI = {
    */
   renderGallery(appointments) {
     const container = this.elements.gallery();
+    container.textContent = '';
 
     if (appointments.length === 0) {
-      container.innerHTML = '<p class="empty-state">No appointments match your criteria.</p>';
+      const empty = document.createElement('p');
+      empty.className = 'empty-state';
+      empty.textContent = 'No appointments match your criteria.';
+      container.appendChild(empty);
       return;
     }
 
-    container.innerHTML = appointments.map(a => this.buildCard(a)).join('');
+    appointments.forEach(a => {
+      container.appendChild(this.buildCard(a));
+    });
   },
 
   /**
-   * Build a single appointment card's HTML.
+   * Build a single appointment card DOM element.
    * @param {Object} a - appointment object
-   * @returns {string} HTML string
+   * @returns {HTMLElement} article element
    */
   buildCard(a) {
+    const article = document.createElement('article');
+    article.className = 'card';
+    article.dataset.id = a.id;
+
     const statusClass = `badge-${a.status.toLowerCase()}`;
     const typeClass   = `badge-${a.appointmentType.toLowerCase()}`;
-    const actions     = this.getCardActions(a);
 
-    return `
-      <article class="card" data-id="${a.id}">
-        <div class="card-header">
-          <div class="card-title-group">
-            <h4 class="status-${a.status.toLowerCase()}">${a.status}</h4>
-            <div class="card-subtitle">${this.escapeHtml(a.employeeName)}</div>
-          </div>
-          <div class="card-header-right">
-            ${actions ? `<div class="card-actions-top">${actions}</div>` : ''}
-            <span class="badge ${typeClass}">${a.appointmentType}</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <span>📧 ${this.escapeHtml(a.employeeEmail)}</span>
-          <span>👤 Supervisor: ${this.escapeHtml(a.supervisorName)}</span>
-          <span>📅 ${a.date} at ${a.time}</span>
-          ${a.notes ? `<span>📝 ${this.escapeHtml(a.notes)}</span>` : ''}
-        </div>
-      </article>
-    `;
+    // Header
+    const header = document.createElement('div');
+    header.className = 'card-header';
+
+    const titleGroup = document.createElement('div');
+    titleGroup.className = 'card-title-group';
+
+    const h4 = document.createElement('h4');
+    h4.className = `status-${a.status.toLowerCase()}`;
+    h4.textContent = a.status;
+
+    const subtitle = document.createElement('div');
+    subtitle.className = 'card-subtitle';
+    subtitle.textContent = a.employeeName;
+
+    titleGroup.appendChild(h4);
+    titleGroup.appendChild(subtitle);
+    header.appendChild(titleGroup);
+
+    const headerRight = document.createElement('div');
+    headerRight.className = 'card-header-right';
+
+    const actions = this.getCardActions(a);
+    if (actions.length > 0) {
+      const actionsTop = document.createElement('div');
+      actionsTop.className = 'card-actions-top';
+      actions.forEach(btn => actionsTop.appendChild(btn));
+      headerRight.appendChild(actionsTop);
+    }
+
+    const typeBadge = document.createElement('span');
+    typeBadge.className = `badge ${typeClass}`;
+    typeBadge.textContent = a.appointmentType;
+    headerRight.appendChild(typeBadge);
+
+    header.appendChild(headerRight);
+    article.appendChild(header);
+
+    // Body
+    const body = document.createElement('div');
+    body.className = 'card-body';
+
+    const email = document.createElement('span');
+    email.textContent = `📧 ${a.employeeEmail}`;
+    body.appendChild(email);
+
+    const sup = document.createElement('span');
+    sup.textContent = `👤 Supervisor: ${a.supervisorName}`;
+    body.appendChild(sup);
+
+    const datetime = document.createElement('span');
+    datetime.textContent = `📅 ${a.date} at ${a.time}`;
+    body.appendChild(datetime);
+
+    if (a.notes) {
+      const notes = document.createElement('span');
+      notes.textContent = `📝 ${a.notes}`;
+      body.appendChild(notes);
+    }
+
+    article.appendChild(body);
+    return article;
   },
 
   /**
    * Determine which action buttons to show based on status.
-   * Status transitions:
-   *   Scheduled → Confirm, Edit, Cancel
-   *   Confirmed → Edit, Cancel, Resolve
-   *   Resolved / Cancelled → no actions
+   * @param {Object} a
+   * @returns {HTMLElement[]} array of button elements
    */
   getCardActions(a) {
+    const buttons = [];
     const id = a.id;
-    switch (a.status) {
-      case 'Scheduled':
-        return `
-          <button class="btn-icon has-tooltip" onclick="App.startEdit(${id})" data-title="Edit">✏️</button>
-          <button class="btn-icon has-tooltip" onclick="App.confirmAppointment(${id})" data-title="Confirm">✔</button>
-          <button class="btn-icon has-tooltip" onclick="App.cancelAppointment(${id})" data-title="Cancel">✖</button>
-        `;
-      case 'Confirmed':
-        return `
-          <button class="btn-icon has-tooltip" onclick="App.startEdit(${id})" data-title="Edit">✏️</button>
-          <button class="btn-icon has-tooltip" onclick="App.resolveAppointment(${id})" data-title="Resolve">✔</button>
-          <button class="btn-icon has-tooltip" onclick="App.cancelAppointment(${id})" data-title="Cancel">✖</button>
-        `;
-      default:
-        return ''; // Resolved and Cancelled are final states
+
+    const createBtn = (icon, title, onclickFn) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-icon has-tooltip';
+      btn.dataset.title = title;
+      btn.textContent = icon;
+      btn.onclick = () => App[onclickFn](id);
+      return btn;
+    };
+
+    if (a.status === 'Scheduled') {
+      buttons.push(createBtn('✏️', 'Edit', 'startEdit'));
+      buttons.push(createBtn('✔', 'Confirm', 'confirmAppointment'));
+      buttons.push(createBtn('✖', 'Cancel', 'cancelAppointment'));
+    } else if (a.status === 'Confirmed') {
+      buttons.push(createBtn('✏️', 'Edit', 'startEdit'));
+      buttons.push(createBtn('✔', 'Resolve', 'resolveAppointment'));
+      buttons.push(createBtn('✖', 'Cancel', 'cancelAppointment'));
     }
+
+    return buttons;
   },
 
   /* ==========================================================
@@ -236,7 +321,7 @@ const UI = {
       // Edit mode
       title.textContent = 'Edit Appointment';
       submitBtn.textContent = 'Update Appointment';
-      document.querySelector('#emp-name').value   = appointment.employeeName;
+      document.querySelector('#emp-name').value    = appointment.employeeName;
       document.querySelector('#emp-email').value   = appointment.employeeEmail;
       document.querySelector('#sup-name').value    = appointment.supervisorName;
       document.querySelector('#sup-email').value   = appointment.supervisorEmail;
@@ -285,14 +370,18 @@ const UI = {
    */
   showFormErrors(errors) {
     const container = this.elements.formErrors();
-    container.innerHTML = errors
-      .map(e => `<div class="form-error-item">⚠ ${this.escapeHtml(e)}</div>`)
-      .join('');
+    container.textContent = '';
+    errors.forEach(e => {
+      const div = document.createElement('div');
+      div.className = 'form-error-item';
+      div.textContent = `⚠ ${e}`;
+      container.appendChild(div);
+    });
   },
 
   /** Clear all form error messages. */
   clearFormErrors() {
-    this.elements.formErrors().innerHTML = '';
+    this.elements.formErrors().textContent = '';
   },
 
   /* ==========================================================
@@ -334,20 +423,6 @@ const UI = {
     setTimeout(() => {
       toast.remove();
     }, 3000);
-  },
-
-  /* ==========================================================
-     UTILITIES
-     ========================================================== */
-
-  /**
-   * Escape HTML to prevent XSS.
-   * @param {string} str
-   * @returns {string}
-   */
-  escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
   }
 };
+
