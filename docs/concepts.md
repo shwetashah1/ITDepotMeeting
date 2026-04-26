@@ -169,8 +169,7 @@ Direct DOM interaction without any framework.
 
 | Method | Usage |
 |--------|-------|
-| `getElementById()` | Access specific elements (form fields, containers) |
-| `querySelector()` / `querySelectorAll()` | Select elements by CSS selector (nav buttons) |
+| `querySelector()` / `querySelectorAll()` | Select elements by CSS selector (form fields, containers, nav buttons) |
 | `classList.add()` / `remove()` / `toggle()` | Toggle CSS classes (view switching, active states) |
 | `innerHTML` | Render dynamic HTML for cards, stats, and lists |
 | `createElement()` | Create toast notification elements |
