@@ -230,8 +230,8 @@ User actions trigger inline toast notifications:
 
 ## 🌐 Deployment
 
-- **GitHub Repository:** [Add Link]
-- **Live Deployment:** [Add Link]
+- **GitHub Repository:** [https://shweta-shah1.github.io/it-asset-scheduler/]
+- **Live Deployment:** [https://it-asset-scheduler.vercel.app/]
 
 ---
 
