@@ -45,14 +45,14 @@ const UI = {
 
     // Each stat links to the Appointments view with a pre-set filter
     const stats = [
-      { label: 'Total',     value: appointments.length, color: 'var(--color-primary)', filterKey: '',       filterValue: '' },
-      { label: 'Scheduled', value: byStatus.Scheduled,  color: 'var(--status-scheduled)', filterKey: 'status', filterValue: 'Scheduled' },
-      { label: 'Confirmed', value: byStatus.Confirmed,  color: 'var(--status-confirmed)', filterKey: 'status', filterValue: 'Confirmed' },
-      { label: 'Resolved',  value: byStatus.Resolved,   color: 'var(--status-resolved)',  filterKey: 'status', filterValue: 'Resolved' },
-      { label: 'Cancelled', value: byStatus.Cancelled,   color: 'var(--status-cancelled)', filterKey: 'status', filterValue: 'Cancelled' },
-      { label: 'Returns',   value: byType.Return,        color: 'var(--type-return)',  filterKey: 'type', filterValue: 'Return' },
-      { label: 'Swaps',     value: byType.Swap,          color: 'var(--type-swap)',    filterKey: 'type', filterValue: 'Swap' },
-      { label: 'Pickups',   value: byType.Pickup,        color: 'var(--type-pickup)', filterKey: 'type', filterValue: 'Pickup' }
+      { label: 'Total',     value: appointments.length, filterKey: '',       filterValue: '' },
+      { label: 'Scheduled', value: byStatus.Scheduled,  filterKey: 'status', filterValue: 'Scheduled' },
+      { label: 'Confirmed', value: byStatus.Confirmed,  filterKey: 'status', filterValue: 'Confirmed' },
+      { label: 'Resolved',  value: byStatus.Resolved,   filterKey: 'status', filterValue: 'Resolved' },
+      { label: 'Cancelled', value: byStatus.Cancelled,  filterKey: 'status', filterValue: 'Cancelled' },
+      { label: 'Returns',   value: byType.Return,       filterKey: 'type', filterValue: 'Return' },
+      { label: 'Swaps',     value: byType.Swap,         filterKey: 'type', filterValue: 'Swap' },
+      { label: 'Pickups',   value: byType.Pickup,       filterKey: 'type', filterValue: 'Pickup' }
     ];
 
     container.innerHTML = stats.map(s => `
@@ -61,7 +61,7 @@ const UI = {
            data-filter-value="${s.filterValue}"
            role="link" tabindex="0"
            title="View ${s.label} appointments">
-        <div class="stat-value" style="color: ${s.color}">${s.value}</div>
+        <div class="stat-value">${s.value}</div>
         <div class="stat-label">${s.label}</div>
       </div>
     `).join('');
@@ -77,10 +77,14 @@ const UI = {
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       .slice(0, 5);
 
-    const heading = '<h3>🕐 Recent Appointments</h3>';
+    const heading = `
+      <div class="card-header">
+        <h4>🕐 Recent Appointments</h4>
+      </div>
+    `;
 
     if (sorted.length === 0) {
-      container.innerHTML = heading + '<p class="empty-state">No appointments yet.</p>';
+      container.innerHTML = heading + '<div class="card-body"><p class="empty-state">No appointments yet.</p></div>';
       return;
     }
 
@@ -94,7 +98,7 @@ const UI = {
       </div>
     `).join('');
 
-    container.innerHTML = heading + items;
+    container.innerHTML = heading + `<div class="card-body">${items}</div>`;
   },
 
   /* ==========================================================
@@ -108,9 +112,13 @@ const UI = {
   renderWidget(data) {
     const container = this.elements.liveWidget();
     container.innerHTML = `
-      <h3>💡 Quote of the Day</h3>
-      <p class="widget-quote">"${this.escapeHtml(data.quote)}"</p>
-      <p class="widget-author">— ${this.escapeHtml(data.author)}</p>
+      <div class="card-header">
+        <h4>💡 Quote of the Day</h4>
+      </div>
+      <div class="card-body">
+        <p class="widget-quote">"${this.escapeHtml(data.quote)}"</p>
+        <p class="widget-author">— ${this.escapeHtml(data.author)}</p>
+      </div>
     `;
   },
 
@@ -121,8 +129,12 @@ const UI = {
   renderWidgetError(message) {
     const container = this.elements.liveWidget();
     container.innerHTML = `
-      <h3>💡 Quote of the Day</h3>
-      <p class="widget-loading">${message}</p>
+      <div class="card-header">
+        <h4>💡 Quote of the Day</h4>
+      </div>
+      <div class="card-body">
+        <p class="widget-loading">${message}</p>
+      </div>
     `;
   },
 
@@ -158,11 +170,14 @@ const UI = {
     return `
       <article class="card" data-id="${a.id}">
         <div class="card-header">
-          <h4>${this.escapeHtml(a.employeeName)}</h4>
-          <span class="badge ${statusClass}">${a.status}</span>
-        </div>
-        <div class="card-badges">
-          <span class="badge ${typeClass}">${a.appointmentType}</span>
+          <div class="card-title-group">
+            <h4 class="status-${a.status.toLowerCase()}">${a.status}</h4>
+            <div class="card-subtitle">${this.escapeHtml(a.employeeName)}</div>
+          </div>
+          <div class="card-header-right">
+            ${actions ? `<div class="card-actions-top">${actions}</div>` : ''}
+            <span class="badge ${typeClass}">${a.appointmentType}</span>
+          </div>
         </div>
         <div class="card-body">
           <span>📧 ${this.escapeHtml(a.employeeEmail)}</span>
@@ -170,7 +185,6 @@ const UI = {
           <span>📅 ${a.date} at ${a.time}</span>
           ${a.notes ? `<span>📝 ${this.escapeHtml(a.notes)}</span>` : ''}
         </div>
-        ${actions ? `<div class="card-actions">${actions}</div>` : ''}
       </article>
     `;
   },
@@ -187,15 +201,15 @@ const UI = {
     switch (a.status) {
       case 'Scheduled':
         return `
-          <button class="btn btn-sm btn-primary" onclick="App.startEdit(${id})">✏️ Edit</button>
-          <button class="btn btn-sm btn-success" onclick="App.confirmAppointment(${id})">✔ Confirm</button>
-          <button class="btn btn-sm btn-danger"  onclick="App.cancelAppointment(${id})">✖ Cancel</button>
+          <button class="btn-icon has-tooltip" onclick="App.startEdit(${id})" data-title="Edit">✏️</button>
+          <button class="btn-icon has-tooltip" onclick="App.confirmAppointment(${id})" data-title="Confirm">✔</button>
+          <button class="btn-icon has-tooltip" onclick="App.cancelAppointment(${id})" data-title="Cancel">✖</button>
         `;
       case 'Confirmed':
         return `
-          <button class="btn btn-sm btn-primary" onclick="App.startEdit(${id})">✏️ Edit</button>
-          <button class="btn btn-sm btn-warning" onclick="App.resolveAppointment(${id})">✔ Resolve</button>
-          <button class="btn btn-sm btn-danger"  onclick="App.cancelAppointment(${id})">✖ Cancel</button>
+          <button class="btn-icon has-tooltip" onclick="App.startEdit(${id})" data-title="Edit">✏️</button>
+          <button class="btn-icon has-tooltip" onclick="App.resolveAppointment(${id})" data-title="Resolve">✔</button>
+          <button class="btn-icon has-tooltip" onclick="App.cancelAppointment(${id})" data-title="Cancel">✖</button>
         `;
       default:
         return ''; // Resolved and Cancelled are final states
@@ -318,8 +332,7 @@ const UI = {
 
     // Auto-dismiss after 3 seconds
     setTimeout(() => {
-      toast.classList.add('toast-out');
-      toast.addEventListener('animationend', () => toast.remove());
+      toast.remove();
     }, 3000);
   },
 
